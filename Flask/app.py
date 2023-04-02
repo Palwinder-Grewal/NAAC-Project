@@ -14,7 +14,7 @@ from werkzeug.utils import secure_filename
 
 
 
-
+# nacc\Scripts\activate
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'skdfjoeir535803930f@###$%%^gjrDSWWEFD$#$%^^%&'
@@ -344,13 +344,11 @@ def logout():
 
 #   Palwinder's temporary work
 
-@app.route('/all_colleges')
+@app.route('/display_colleges')
 def display_colleges():
     cursor = connection.cursor()
     cursor.execute('SELECT college.coll_name,college.coll_email, college.coll_loc, college.parent_univ, admin.email, CONCAT(admin.first_name," ", admin.middle_name," ", admin.last_name) AS Mentor FROM college JOIN admin ON admin.email=college.mentor_id')
     colleges = cursor.fetchall()
-    print(':::::::::::::::')
-    print(colleges[2]['coll_email'])
     cursor.close()
 
     cursor = connection.cursor()
@@ -359,7 +357,6 @@ def display_colleges():
     cursor.close()
     return render_template('all_colleges.html', colleges = colleges, all_mentors = all_mentors)
 
-@app.route('/change_mentor', methods = ['GET', 'POST'])
 @app.route('/change_mentor', methods = ['GET', 'POST'])
 def change_mentor():
     cursor = connection.cursor()
@@ -374,7 +371,6 @@ def change_mentor():
     if request.method == 'POST':
         global new_mentor
         new_mentor = request.form.get('new_mentor')
-        print('new_mentor', new_mentor)
 
         cursor = connection.cursor()
         cursor.execute(f'UPDATE college SET mentor_id = "{new_mentor}" WHERE coll_email = "{coll_email}"')
@@ -382,6 +378,53 @@ def change_mentor():
         cursor.close()
     return render_template('update_mentor.html', coll_email = coll_email, all_mentors = all_mentors)
 
+@app.route('/college_profile', methods = ['GET', 'POST'])
+def college_profile():
+    return render_template('college_profile.html')
+
+
+@app.route('/executive_summary', methods = ['GET', 'POST'])
+def executive_summary():
+    print('In executive summary function')
+    # if request.method == 'POST':
+    location = request.form.get('location')
+    visson = request.form.get('visson')
+    institution_type = request.form.get('institution_type')
+    criterion = request.form.get('criterion')
+    swoc = request.form.get('swoc')
+    additional_info = request.form.get('additional_info')
+    conclusive = request.form.get('conclusive')
+    criterion_alert = False
+    all_words_alert = False
+
+
+    if request.method == 'POST':
+        cursor = connection.cursor()
+        cursor.execute(f"INSERT INTO executive_info VALUES ({0}, '{location}', '{visson}', '{institution_type}', '{criterion}', '{swoc}', '{additional_info}', '{conclusive}')")
+        cursor.connection.commit()
+        cursor.close()
+
+        location_list = location.split()
+        visson_list = visson.split()
+        institution_type_list = institution_type.split()
+        criterion_list = criterion.split()
+        swoc_list = swoc.split()
+        additional_info_list = additional_info.split()
+        conclusive_list = conclusive.split()
+        if len(criterion_list) > 5 :
+            criterion_alert = True
+            print('should not more than 5 words')
+            return render_template('executive_summary.html', criterion_alert = criterion_alert, all_words_alert = all_words_alert)
+        # if len(criterion_list + location_list + visson_list + institution_type_list + swoc_list + additional_info_list + conclusive_list) > 10:
+        #     all_words_alert = True
+        #     print(' overall inputs should be less than 10')
+        #     return render_template('executive_summary.html',criterion_alert = criterion_alert,all_words_alert = all_words_alert)
+
+    return render_template('executive_summary.html', criterion_alert = criterion_alert, all_words_alert = all_words_alert)
+
+@app.route('/slidebar')
+def slidebar():
+    return render_template('temp_layout.html')
 
 
 if __name__ == '__main__':

@@ -1,0 +1,59 @@
+{% extends 'temp_layout.html' %}
+{% block mycontent %}
+
+<div class="container m-5">
+    <center>
+        <div class="card ml-4 " style="width: 50%;">
+            <form action="{{url_for('executive_summary')}}" method="post">
+
+                <div class="card-body">
+                    <h5 class="card-title">Introductory Note</h5>
+                    <input type="text" class="form-control mt-2" name="location" placeholder="location" required>
+                </div>
+                <div class="card-body">
+                    <input type="text" class="form-control" name="visson" placeholder="mission/visson" required>
+                </div>
+                <div class="card-body">
+                    <input type="text" class="form-control" name="institution_type" placeholder="type of institution"
+                        required>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Criterion-wise summary</h5>
+                    <input type="text" class="form-control" name="criterion" placeholder="should not exceed 250 words"
+                        required>
+
+                    {% if criterion_alert %}
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        Criterion-wise summary should not exceed 250 words.
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    {% endif %}
+
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Strength Weakness Opportunities and Challenges (SWOC)</h5>
+                    <input type="text" class="form-control" name="swoc" required>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Any additional information</h5>
+                    <input type="text" class="form-control" name="additional_info">
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Overall conclusive information</h5>
+                    <input type="text" class="form-control" name="conclusive" required>
+                    <center class="mt-2">
+                        <button class="btn btn-primary " type="submit">Submit</button>
+                    </center>
+                </div>
+            </form>
+            <a href="{{url_for('display_colleges')}}">
+                <button class="btn btn-secondary ">Go Back</button>
+            </a>
+
+        </div>
+    </center>
+</div>
+
+{% endblock %}
